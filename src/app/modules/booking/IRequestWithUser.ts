@@ -1,6 +1,6 @@
 // @types/express/index.d.ts
 import { Request } from 'express';
 
-export interface IRequestWithUser extends Request {
+export interface bookingInterface extends Request {
   user?: any;
 }
