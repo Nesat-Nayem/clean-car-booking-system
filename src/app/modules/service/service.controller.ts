@@ -13,11 +13,12 @@ export const createService = async (req: Request, res: Response) => {
       
           res.status(201).json({
             success: true,
+            statusCode: 200,
             message: 'Service created successfully',
             data: service,
           });
         } catch (error:any) {
-          res.status(400).json({ success: false, message: error.message });
+          res.status(400).json({ success: false,    statusCode: 400, message: error.message });
         }
       }
 }
