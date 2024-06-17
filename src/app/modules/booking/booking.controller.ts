@@ -36,7 +36,7 @@ export const bookService = async (req: bookingInterface, res: Response) => {
 
     res.status(201).json({
       success: true,
-      statusCode: 201,
+      statusCode: 200,
       message: 'Booking successful',
       data: booking,
     });

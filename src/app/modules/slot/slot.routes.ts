@@ -7,7 +7,7 @@ import { adminMiddleware } from '../../middlewares/adminMiddleware';
 
 const router = express.Router();
 
-router.post('/',  authMiddleware, adminMiddleware, createSlot);
+// router.post('/',  authMiddleware, adminMiddleware, createSlot);
 
 router.get('/availability', getAllSlots);
 

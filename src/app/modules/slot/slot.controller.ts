@@ -27,11 +27,12 @@ export const createSlot = async(req:Request,res:Response)=>{
     
         res.status(201).json({
           success: true,
+          statusCode: 200,
           message: 'Slots created successfully',
           data: slots,
         });
       } catch (error:any) {
-        res.status(400).json({ success: false, message: error.message });
+        res.status(400).json({ success: false,        statusCode: 400, message: error.message });
       }
 }
 export const getAllSlots = async(req:Request,res:Response)=>{
@@ -48,15 +49,16 @@ export const getAllSlots = async(req:Request,res:Response)=>{
     
         const slots = await Slot.find(query).populate('service');
         if (slots.length === 0) {
-          return res.status(404).json({ success: false, message: 'No data found' });
+          return res.status(404).json({ success: false, statusCode: 404, message: 'No data found' });
         }
     
         res.json({
           success: true,
+          statusCode: 200,
           message: 'Available slots retrieved successfully',
           data: slots,
         });
       } catch (error:any) {
-        res.status(400).json({ success: false, message: error.message });
+        res.status(400).json({ success: false, statusCode: 400, message: error.message });
       }
 }
