@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
-import { AppError } from '../errors/AppError';
+import { appError } from '../errors/appError';
 const notFound = (req: Request, res: Response, next: NextFunction) => {
-  const err = new AppError('Not Found', 404);
+  const err = new appError('Not Found', 404);
   next(err);
 };
 

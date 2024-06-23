@@ -4,7 +4,7 @@ import { NextFunction, Request, Response } from "express";
 import { Slot } from "../slot/slot.model";
 import { Booking } from "./booking.model";
 import { bookingInterface } from "./IRequestWithUser";
-import { AppError } from "../../errors/AppError";
+import { appError } from "../../errors/appError";
 
 export const bookService = async (req: bookingInterface, res: Response, next:NextFunction) => {
   try {
@@ -20,7 +20,7 @@ export const bookService = async (req: bookingInterface, res: Response, next:Nex
     const slot = await Slot.findById(slotId);
 
     if (!slot || slot.isBooked !== "available") {
-    return next(new AppError("Slot is not available", 400));
+    return next(new appError("Slot is not available", 400));
     }
 
     const booking = new Booking({
@@ -67,7 +67,7 @@ export const getAllBookings = async (req: Request, res: Response, next: NextFunc
       .populate("slot");
 
     if (bookings.length === 0) {
-      return next(new AppError("No data found", 404))
+      return next(new appError("No data found", 404))
     }
 
     res.status(200).json({
@@ -91,7 +91,7 @@ export const getUserBookings = async (req: bookingInterface, res: Response, next
         );
 
     if (bookings.length === 0) {
-      return next(new AppError("No data found", 404));
+      return next(new appError("No data found", 404));
     }
 
     res.status(200).json({

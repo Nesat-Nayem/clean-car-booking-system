@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { slotValidation } from "./slot.validation";
 import { Slot } from "./slot.model";
-import { AppError } from "../../errors/AppError";
+import { appError } from "../../errors/appError";
 
 export const createSlot = async(req:Request,res:Response, next:NextFunction) => {
     try {
@@ -50,7 +50,7 @@ export const getAllSlots = async(req:Request,res:Response, next:NextFunction) =>
     
         const slots = await Slot.find(query).populate('service');
         if (slots.length === 0) {
-          return next(new AppError('No data found', 404));
+          return next(new appError('No data found', 404));
         }
     
         res.json({

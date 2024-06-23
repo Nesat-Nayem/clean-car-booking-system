@@ -1,8 +1,8 @@
 
-import { AppError } from "./AppError";
+import { appError } from "./appError";
 const handleCastError = (err: any) => {
   const message = `Invalid ${err.path}: ${err.value}.`;
-  return new AppError(message, 400);
+  return new appError(message, 400);
 };
 
 export default handleCastError;

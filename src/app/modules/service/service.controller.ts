@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { Service } from "./service.model";
 import { serviceValidation } from "./service.validation";
-import { AppError } from "../../errors/AppError";
+import { appError } from "../../errors/appError";
 
 export const createService = async (
   req: Request,
@@ -42,7 +42,7 @@ export const getServiceWithId = async (
   try {
     const service = await Service.findById(req.params.id);
     if (!service) {
-      return next(new AppError("Service not found", 404));
+      return next(new appError("Service not found", 404));
     }
 
     res.json({
@@ -64,7 +64,7 @@ export const getAllServices = async (
     const services = await Service.find({ isDeleted: false });
 
     if (services.length === 0) {
-      return next(new AppError("No data found", 404));
+      return next(new appError("No data found", 404));
     }
 
     res.json({
@@ -93,7 +93,7 @@ export const updateWithId = async (
       { new: true }
     );
     if (!service) {
-      return next(new AppError("Service not found", 404));
+      return next(new appError("Service not found", 404));
     }
 
     res.json({
@@ -118,7 +118,7 @@ export const deleteWithId = async (
       { new: true }
     );
     if (!service) {
-      return next(new AppError("Service not found", 404));
+      return next(new appError("Service not found", 404));
     }
 
     res.json({
