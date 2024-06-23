@@ -5,12 +5,6 @@ import handleDuplicateError from '../errors/handleDuplicateError';
 import handleZodError from '../errors/handleZodError';
 import handleValidationError from '../errors/handleValidationError';
 import { ZodError } from 'zod';
-// import { AppError } from './appError';
-// import handleCastError from './handleCastError';
-// import handleDuplicateError from './handleDuplicateError';
-// import handleValidationError from './handleValidationError';
-// import handleZodError from './handleZodError';
-
 const globalErrorHandler = (err: any, req: Request, res: Response, next: NextFunction) => {
   err.statusCode = err.statusCode || 500;
   err.status = err.status || 'error';

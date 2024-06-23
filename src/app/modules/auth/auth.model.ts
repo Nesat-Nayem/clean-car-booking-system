@@ -1,7 +1,6 @@
 // models/userModel.ts
 import mongoose, { Document, Schema } from 'mongoose';
 import bcrypt from 'bcrypt';
-
 export interface IUser extends Document {
   name: string;
   email: string;
@@ -11,7 +10,6 @@ export interface IUser extends Document {
   address: string;
   comparePassword(password: string): Promise<boolean>;
 }
-
 const userSchema: Schema = new Schema(
   {
     name: { type: String, required: true },
@@ -23,7 +21,6 @@ const userSchema: Schema = new Schema(
   },
   { timestamps: true }
 );
-
 userSchema.pre<IUser>('save', async function (next) {
   if (!this.isModified('password')) {
     return next();

@@ -3,7 +3,6 @@ import { Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 import { User } from "../modules/auth/auth.model";
 import { userInterface } from "./userInterface";
-
 export const authMiddleware = async (
   req: userInterface,
   res: Response,

@@ -1,11 +1,12 @@
 // controllers/bookingController.ts
 
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { Slot } from "../slot/slot.model";
 import { Booking } from "./booking.model";
 import { bookingInterface } from "./IRequestWithUser";
+import { AppError } from "../../errors/AppError";
 
-export const bookService = async (req: bookingInterface, res: Response) => {
+export const bookService = async (req: bookingInterface, res: Response, next:NextFunction) => {
   try {
     const {
       serviceId,
@@ -19,11 +20,7 @@ export const bookService = async (req: bookingInterface, res: Response) => {
     const slot = await Slot.findById(slotId);
 
     if (!slot || slot.isBooked !== "available") {
-      return res.status(400).json({
-        success: false,
-        statusCode: 400,
-        message: "Slot is not available",
-      });
+    return next(new AppError("Slot is not available", 400));
     }
 
     const booking = new Booking({
@@ -42,7 +39,7 @@ export const bookService = async (req: bookingInterface, res: Response) => {
     slot.isBooked = "booked";
     await slot.save();
 
-    // Populate the referenced documents to include full data
+    // Populate the referenced documents data
 
     const populatedBooking = await Booking.findById(booking._id)
       .populate("customer", "name email phone address")
@@ -58,15 +55,11 @@ export const bookService = async (req: bookingInterface, res: Response) => {
       data: populatedBooking,
     });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      statusCode: 500,
-      message: "Internal server error",
-    });
+    next(error);
   }
 };
 
-export const getAllBookings = async (req: Request, res: Response) => {
+export const getAllBookings = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const bookings = await Booking.find()
       .populate("customer", "name email phone address")
@@ -74,12 +67,7 @@ export const getAllBookings = async (req: Request, res: Response) => {
       .populate("slot");
 
     if (bookings.length === 0) {
-      return res.status(404).json({
-        success: false,
-        statusCode: 404,
-        message: "No data found",
-        data: [],
-      });
+      return next(new AppError("No data found", 404))
     }
 
     res.status(200).json({
@@ -89,15 +77,11 @@ export const getAllBookings = async (req: Request, res: Response) => {
       data: bookings,
     });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      statusCode: 500,
-      message: "Internal server error",
-    });
+    next(error);
   }
 };
 
-export const getUserBookings = async (req: bookingInterface, res: Response) => {
+export const getUserBookings = async (req: bookingInterface, res: Response, next:NextFunction) => {
   try {
     const bookings = await Booking.find({ customer: req.user._id })
       .populate("service")
@@ -107,12 +91,7 @@ export const getUserBookings = async (req: bookingInterface, res: Response) => {
         );
 
     if (bookings.length === 0) {
-      return res.status(404).json({
-        success: false,
-        statusCode: 404,
-        message: "No data found",
-        data: [],
-      });
+      return next(new AppError("No data found", 404));
     }
 
     res.status(200).json({
@@ -122,10 +101,6 @@ export const getUserBookings = async (req: bookingInterface, res: Response) => {
       data: bookings,
     });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      statusCode: 500,
-      message: "Internal server error",
-    });
+    next(error);
   }
 };

@@ -1,4 +1,3 @@
-// routes/serviceRoutes.ts
 import express from 'express';
 import { createService, deleteWithId, getAllServices, getServiceWithId, updateWithId } from './service.controller';
 import { adminMiddleware } from '../../middlewares/adminMiddleware';

@@ -1,4 +1,3 @@
-// models/slotModel.ts
 import mongoose, { Document, Schema } from 'mongoose';
 
 export interface ISlot extends Document {

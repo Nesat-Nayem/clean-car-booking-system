@@ -1,8 +1,9 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { slotValidation } from "./slot.validation";
 import { Slot } from "./slot.model";
+import { AppError } from "../../errors/AppError";
 
-export const createSlot = async(req:Request,res:Response)=>{
+export const createSlot = async(req:Request,res:Response, next:NextFunction) => {
     try {
         const { service, date, startTime, endTime } = slotValidation.parse(req.body);
     
@@ -32,10 +33,10 @@ export const createSlot = async(req:Request,res:Response)=>{
           data: slots,
         });
       } catch (error:any) {
-        res.status(400).json({ success: false,        statusCode: 400, message: error.message });
+        next(error);
       }
 }
-export const getAllSlots = async(req:Request,res:Response)=>{
+export const getAllSlots = async(req:Request,res:Response, next:NextFunction) => {
     try {
         const { date, serviceId } = req.query;
     
@@ -49,7 +50,7 @@ export const getAllSlots = async(req:Request,res:Response)=>{
     
         const slots = await Slot.find(query).populate('service');
         if (slots.length === 0) {
-          return res.status(404).json({ success: false, statusCode: 404, message: 'No data found' });
+          return next(new AppError('No data found', 404));
         }
     
         res.json({
@@ -59,6 +60,6 @@ export const getAllSlots = async(req:Request,res:Response)=>{
           data: slots,
         });
       } catch (error:any) {
-        res.status(400).json({ success: false, statusCode: 400, message: error.message });
+        next(error);
       }
 }
