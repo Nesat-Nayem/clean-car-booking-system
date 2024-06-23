@@ -1,11 +1,11 @@
-import { NextFunction, Request, Response } from 'express';
-import httpStatus from 'http-status';
-// not found handle
+// notFound.ts
+import { Request, Response, NextFunction } from 'express';
+import { AppError } from '../errors/AppError';
+// import { AppError } from './appError';
+
 const notFound = (req: Request, res: Response, next: NextFunction) => {
-  return res.status(httpStatus.NOT_FOUND).json({
-    success: false,
-    message: 'Route not found'
-  });
+  const err = new AppError('Not Found', 404);
+  next(err);
 };
 
 export default notFound;

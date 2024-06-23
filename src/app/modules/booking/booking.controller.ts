@@ -1,20 +1,28 @@
 // controllers/bookingController.ts
 
-import { Request, Response } from 'express';
-import { Slot } from '../slot/slot.model';
-import { Booking } from './booking.model';
-import { bookingInterface } from './IRequestWithUser';
+import { Request, Response } from "express";
+import { Slot } from "../slot/slot.model";
+import { Booking } from "./booking.model";
+import { bookingInterface } from "./IRequestWithUser";
 
 export const bookService = async (req: bookingInterface, res: Response) => {
   try {
-    const { serviceId, slotId, vehicleType, vehicleBrand, vehicleModel, manufacturingYear, registrationPlate } = req.body;
+    const {
+      serviceId,
+      slotId,
+      vehicleType,
+      vehicleBrand,
+      vehicleModel,
+      manufacturingYear,
+      registrationPlate,
+    } = req.body;
     const slot = await Slot.findById(slotId);
 
-    if (!slot || slot.isBooked !== 'available') {
+    if (!slot || slot.isBooked !== "available") {
       return res.status(400).json({
         success: false,
         statusCode: 400,
-        message: 'Slot is not available',
+        message: "Slot is not available",
       });
     }
 
@@ -31,20 +39,29 @@ export const bookService = async (req: bookingInterface, res: Response) => {
 
     await booking.save();
 
-    slot.isBooked = 'booked';
+    slot.isBooked = "booked";
     await slot.save();
+
+    // Populate the referenced documents to include full data
+
+    const populatedBooking = await Booking.findById(booking._id)
+      .populate("customer", "name email phone address")
+      .populate("service", "name description price duration isDeleted")
+      .populate("slot", "service date startTime endTime isBooked");
+
+
 
     res.status(201).json({
       success: true,
       statusCode: 200,
-      message: 'Booking successful',
-      data: booking,
+      message: "Booking successful",
+      data: populatedBooking,
     });
   } catch (error) {
     res.status(500).json({
       success: false,
       statusCode: 500,
-      message: 'Internal server error',
+      message: "Internal server error",
     });
   }
 };
@@ -52,15 +69,15 @@ export const bookService = async (req: bookingInterface, res: Response) => {
 export const getAllBookings = async (req: Request, res: Response) => {
   try {
     const bookings = await Booking.find()
-      .populate('customer', 'name email phone address')
-      .populate('service')
-      .populate('slot');
+      .populate("customer", "name email phone address")
+      .populate("service")
+      .populate("slot");
 
     if (bookings.length === 0) {
       return res.status(404).json({
         success: false,
         statusCode: 404,
-        message: 'No data found',
+        message: "No data found",
         data: [],
       });
     }
@@ -68,14 +85,14 @@ export const getAllBookings = async (req: Request, res: Response) => {
     res.status(200).json({
       success: true,
       statusCode: 200,
-      message: 'All bookings retrieved successfully',
+      message: "All bookings retrieved successfully",
       data: bookings,
     });
   } catch (error) {
     res.status(500).json({
       success: false,
       statusCode: 500,
-      message: 'Internal server error',
+      message: "Internal server error",
     });
   }
 };
@@ -83,14 +100,17 @@ export const getAllBookings = async (req: Request, res: Response) => {
 export const getUserBookings = async (req: bookingInterface, res: Response) => {
   try {
     const bookings = await Booking.find({ customer: req.user._id })
-      .populate('service')
-      .populate('slot');
+      .populate("service")
+      .populate("slot")
+      .select(
+        "-customer"
+        );
 
     if (bookings.length === 0) {
       return res.status(404).json({
         success: false,
         statusCode: 404,
-        message: 'No data found',
+        message: "No data found",
         data: [],
       });
     }
@@ -98,14 +118,14 @@ export const getUserBookings = async (req: bookingInterface, res: Response) => {
     res.status(200).json({
       success: true,
       statusCode: 200,
-      message: 'User bookings retrieved successfully',
+      message: "User bookings retrieved successfully",
       data: bookings,
     });
   } catch (error) {
     res.status(500).json({
       success: false,
       statusCode: 500,
-      message: 'Internal server error',
+      message: "Internal server error",
     });
   }
 };

@@ -1,8 +1,9 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { Service } from "./service.model";
 import { serviceValidation } from "./service.validation";
+import { AppError } from "../../errors/AppError";
 
-export const createService = async (req: Request, res: Response) => {
+export const createService = async (req: Request, res: Response, next:NextFunction) => {
   {
     try {
       const { name, description, price, duration, isDeleted } =
@@ -24,22 +25,23 @@ export const createService = async (req: Request, res: Response) => {
         data: service,
       });
     } catch (error: any) {
-      res
-        .status(400)
-        .json({ success: false, statusCode: 400, message: error.message });
+      next(error)
     }
   }
 };
 
-export const getServiceWithId = async (req: Request, res: Response) => {
+export const getServiceWithId = async (req: Request, res: Response, next:NextFunction) => {
   try {
     const service = await Service.findById(req.params.id);
+    // if (!service) {
+    //   return res.status(404).json({
+    //     success: false,
+    //     statusCode: 404,
+    //     message: "Service not found",
+    //   });
+    // }
     if (!service) {
-      return res.status(404).json({
-        success: false,
-        statusCode: 404,
-        message: "Service not found",
-      });
+     return next(new AppError('Service not found', 404))
     }
 
     res.json({
@@ -49,18 +51,22 @@ export const getServiceWithId = async (req: Request, res: Response) => {
       data: service,
     });
   } catch (error: any) {
-    res
-      .status(400)
-      .json({ success: false, statusCode: 400, message: error.message });
+    // res
+    //   .status(400)
+    //   .json({ success: false, statusCode: 400, message: error.message });
+    next(error)
   }
 };
-export const getAllServices = async (req: Request, res: Response) => {
+export const getAllServices = async (req: Request, res: Response, next:NextFunction) => {
   try {
     const services = await Service.find({ isDeleted: false });
+    // if (services.length === 0) {
+    //   return res
+    //     .status(404)
+    //     .json({ success: false, statusCode: 400, message: "No data found" });
+    // }
     if (services.length === 0) {
-      return res
-        .status(404)
-        .json({ success: false, statusCode: 400, message: "No data found" });
+      return next(new AppError('No data found', 404))
     }
 
     res.json({
@@ -70,10 +76,11 @@ export const getAllServices = async (req: Request, res: Response) => {
       data: services,
     });
   } catch (error: any) {
-    res.status(400).json({ success: false, message: error.message });
+    // res.status(400).json({ success: false, message: error.message });
+    next(error)
   }
 };
-export const updateWithId = async (req: Request, res: Response) => {
+export const updateWithId = async (req: Request, res: Response, next:NextFunction) => {
   try {
     const updateFields = req.body;
 
@@ -85,11 +92,13 @@ export const updateWithId = async (req: Request, res: Response) => {
       { new: true }
     );
     if (!service) {
-      return res.status(404).json({
-        success: false,
-        statusCode: 404,
-        message: "Service not found",
-      });
+      // return res.status(404).json({
+      //   success: false,
+      //   statusCode: 404,
+      //   message: "Service not found",
+      // });
+
+      return next(new AppError('Service not found', 404))
     }
 
     res.json({
@@ -99,12 +108,13 @@ export const updateWithId = async (req: Request, res: Response) => {
       data: service,
     });
   } catch (error: any) {
-    res
-      .status(400)
-      .json({ success: false, statusCode: 400, message: error.message });
+    // res
+    //   .status(400)
+    //   .json({ success: false, statusCode: 400, message: error.message });
+    next(error)
   }
 };
-export const deleteWithId = async (req: Request, res: Response) => {
+export const deleteWithId = async (req: Request, res: Response, next:NextFunction) => {
   try {
     const service = await Service.findByIdAndUpdate(
       req.params.id,
@@ -112,11 +122,12 @@ export const deleteWithId = async (req: Request, res: Response) => {
       { new: true }
     );
     if (!service) {
-      return res.status(404).json({
-        success: false,
-        statusCode: 404,
-        message: "Service not found",
-      });
+      // return res.status(404).json({
+      //   success: false,
+      //   statusCode: 404,
+      //   message: "Service not found",
+      // });
+      return next(new AppError('Service not found', 404))
     }
 
     res.json({
@@ -126,8 +137,9 @@ export const deleteWithId = async (req: Request, res: Response) => {
       data: service,
     });
   } catch (error: any) {
-    res
-      .status(400)
-      .json({ success: false, statusCode: 400, message: error.message });
+    // res
+    //   .status(400)
+    //   .json({ success: false, statusCode: 400, message: error.message });
+    next(error)
   }
 };

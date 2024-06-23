@@ -11,5 +11,5 @@ export const generateToken = (user: IUser) => {
     role: user.role,
     address: user.address,
   };
-  return jwt.sign(payload, process.env.JWT_SECRET!, { expiresIn: '1h' });
+  return jwt.sign(payload, process.env.JWT_SECRET!, { expiresIn: '2h' });
 };
