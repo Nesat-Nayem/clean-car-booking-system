@@ -1,5 +1,3 @@
-// controllers/bookingController.ts
-
 import { NextFunction, Request, Response } from "express";
 import { Slot } from "../slot/slot.model";
 import { Booking } from "./booking.model";

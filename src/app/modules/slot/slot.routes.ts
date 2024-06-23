@@ -1,4 +1,3 @@
-// routes/slotRoutes.ts
 import express from 'express';
 
 import {  getAllSlots } from './slot.controller';

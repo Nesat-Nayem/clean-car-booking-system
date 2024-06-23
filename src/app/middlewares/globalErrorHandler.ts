@@ -1,4 +1,3 @@
-// globalErrorHandler.ts
 import { Request, Response, NextFunction } from 'express';
 import handleCastError from '../errors/handleCastError';
 import handleDuplicateError from '../errors/handleDuplicateError';
